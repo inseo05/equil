@@ -229,6 +229,15 @@
 
     if (resultSection) {
       resultSection.hidden = true;
+      resultSection.addEventListener('click', (event) => {
+        const moreButton = event.target.closest('.sleep-fit-result__more');
+        if (!moreButton) return;
+
+        moreButton.closest('.sleep-fit-result__tags')?.querySelectorAll('.btn-tab.is-hidden').forEach((tag) => {
+          tag.classList.remove('is-hidden');
+        });
+        moreButton.remove();
+      });
     }
 
     if (structureSection) {
@@ -464,10 +473,27 @@
     const updateResultTags = (labels) => {
       if (!resultSection || !labels.length) return;
 
+      const visibleCount = 3;
+
       resultSection.querySelectorAll('.sleep-fit-result__tags').forEach((tagsEl) => {
-        tagsEl.innerHTML = labels
-          .map((label) => `<span class="btn btn-tab is-active">${label}</span>`)
-          .join('');
+        tagsEl.replaceChildren();
+
+        labels.forEach((label, index) => {
+          const tag = document.createElement('span');
+          tag.className = 'btn btn-tab is-active';
+          if (index >= visibleCount) tag.classList.add('is-hidden');
+          tag.textContent = label;
+          tagsEl.appendChild(tag);
+        });
+
+        if (labels.length <= visibleCount) return;
+
+        const moreButton = document.createElement('button');
+        moreButton.type = 'button';
+        moreButton.className = 'sleep-fit-result__more';
+        moreButton.textContent = '...';
+        moreButton.setAttribute('aria-label', '나머지 선택 항목 보기');
+        tagsEl.appendChild(moreButton);
       });
     };
 
