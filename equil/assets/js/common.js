@@ -69,6 +69,83 @@
       document.head.appendChild(script);
     });
 
+  const PORTFOLIO_NOTICE_KEY = 'equil-portfolio-notice';
+  const PORTFOLIO_NOTICE_MS = 4800;
+
+  const initPortfolioNotice = () => {
+    try {
+      if (sessionStorage.getItem(PORTFOLIO_NOTICE_KEY) === 'shown') return;
+      sessionStorage.setItem(PORTFOLIO_NOTICE_KEY, 'shown');
+    } catch {
+      /* 저장소를 쓸 수 없어도 안내는 한 번 보여 준다 */
+    }
+
+    const notice = document.createElement('div');
+    notice.className = 'portfolio-notice';
+    notice.setAttribute('role', 'status');
+    notice.setAttribute('aria-live', 'polite');
+
+    const panel = document.createElement('div');
+    panel.className = 'portfolio-notice__panel';
+
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'portfolio-notice__close';
+    closeButton.setAttribute('aria-label', '안내 닫기');
+    closeButton.textContent = '×';
+
+    const text = document.createElement('p');
+    text.className = 'portfolio-notice__text';
+    text.append(
+      document.createTextNode('본 사이트는 포트폴리오 목적으로 제작된 가상 사이트이며,'),
+      document.createElement('br'),
+      document.createTextNode('실제 운영되는 사이트가 아닙니다.')
+    );
+
+    panel.append(closeButton, text);
+    notice.append(panel);
+    document.body.append(notice);
+
+    let closed = false;
+    let autoTimer = 0;
+
+    const removeNotice = () => {
+      notice.remove();
+    };
+
+    const closeNotice = () => {
+      if (closed || !notice.isConnected) return;
+      closed = true;
+      window.clearTimeout(autoTimer);
+      notice.style.animation = 'none';
+      notice.style.opacity = '1';
+      window.requestAnimationFrame(() => {
+        notice.classList.add('is-leaving');
+        window.setTimeout(removeNotice, 250);
+      });
+    };
+
+    closeButton.addEventListener('click', closeNotice);
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      autoTimer = window.setTimeout(closeNotice, PORTFOLIO_NOTICE_MS);
+      return;
+    }
+
+    notice.addEventListener('animationend', (event) => {
+      if (event.target !== notice || closed) return;
+      closed = true;
+      removeNotice();
+    });
+  };
+
+  if (document.body) {
+    initPortfolioNotice();
+  } else {
+    document.addEventListener('DOMContentLoaded', initPortfolioNotice, { once: true });
+  }
+
   window.equilLibsReady = (async () => {
     if (typeof window.gsap === 'undefined') {
       await loadScript(GSAP_SRC);

@@ -390,6 +390,117 @@ a {
 }
 
 /* ========================================
+   포트폴리오 안내 (세션 최초 1회, 자동 닫힘)
+   ======================================== */
+
+.portfolio-notice {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  background-color: rgba(50, 42, 35, 0.45);
+  pointer-events: none;
+  opacity: 0;
+  animation: portfolio-notice-cycle 4.8s ease forwards;
+}
+
+.portfolio-notice.is-leaving {
+  animation: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.portfolio-notice__panel {
+  position: relative;
+  max-width: 34rem;
+  margin: 0;
+  padding: 2.25rem 2.75rem 2rem;
+  border-radius: 1.25rem;
+  background-color: var(--color-white);
+  box-shadow: 0 1rem 2.5rem rgba(50, 42, 35, 0.18);
+  text-align: center;
+}
+
+.portfolio-notice__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  pointer-events: auto;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.portfolio-notice__text {
+  margin: 0;
+  font-family: var(--font-suit);
+  font-weight: 400;
+  font-size: clamp(0.75rem, 3.636vw, 1rem); /* 16px */
+  line-height: 160%;
+  color: var(--color-brand-dark);
+  word-break: keep-all;
+}
+
+@keyframes portfolio-notice-cycle {
+  0% {
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .portfolio-notice__text {
+    font-size: clamp(0.844rem, 1.76vw, 1.125rem); /* 18px */
+  }
+}
+
+@media (min-width: 64rem) {
+  .portfolio-notice__text {
+    font-size: 1.125rem; /* 18px */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-notice {
+    animation: none;
+    opacity: 1;
+  }
+
+  .portfolio-notice.is-leaving {
+    transition: none;
+  }
+}
+
+/* ========================================
    Mobile — 한글 줄바꿈 (띄어쓰기 단위)
    ======================================== */
 
